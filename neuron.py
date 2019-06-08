@@ -29,12 +29,15 @@ class GLSNeuron(object):
         """Compute firing time."""
         w = self.q
         I_high, I_low = x + self.epsilon, x - self.epsilon 
-        N_it = 0 
+        N_it = 0
+        N_tol = 1000
         while True:
             w = self.T_map(w)
             N_it += 1
             if w <= I_high and w >= I_low:
                 return N_it
+            if N_it == N_tol:
+                raise ValueError("Neuron iterated {} times. \nValue: {}".format(N_it, w))
                 
 
 
@@ -90,7 +93,6 @@ class GLSLayer(object):
         M = []
         for cl in self.classes:
             inds = np.where(y == cl)[0]
-            print(inds)
             Xs = X[inds,:]
             M.append(self.extract_features(Xs).mean(axis=0))
         self.M = np.asarray(M)
