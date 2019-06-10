@@ -1,17 +1,21 @@
 """
 This code is a verbatim implementation of 'A Novel Chaos Theory Inspired Neuronal Architecture'
 by Harikrishnan N B and Nithin Nagaraj: https://arxiv.org/pdf/1905.12601.pdf
+https://www.machinecurve.com/index.php/2019/06/02/could-chaotic-neurons-reduce-machine-learning-data-hunger/#testing-on-the-mnist-dataset
 """
 from scipy.spatial.distance import cosine
 import numpy as np
 import tqdm
 import glsneuron
+import multiprocessing as mp
+
+N_CPU = mp.cpu_count()
+
 
 class GLSNeuron(object):
     def __init__(self, q=0.5, b=0.55, epsilon=0.05):
         """
         Initial q and b are based on 
-        https://www.machinecurve.com/index.php/2019/06/02/could-chaotic-neurons-reduce-machine-learning-data-hunger/#testing-on-the-mnist-dataset
         """        
         self.b = b
         self.q = q
@@ -54,6 +58,12 @@ class GLSLayer(object):
         X_ = X - min_X
         return X_ / (np.max(X) - min_X)
     
+    def _extract_features(self, sample):
+        m = np.zeros((len(sample), ))
+        for i, value in enumerate(sample):
+            neuron = self.neurons[i]
+            m[i] = neuron(value)
+        return m
 
     def extract_features(self, X):
         """
@@ -61,11 +71,9 @@ class GLSLayer(object):
         (Algorithm 2. in the paper)
         """
         X = self.normalize(X)
-        M = np.zeros(X.shape)
-        for i, sample in tqdm.tqdm(list(enumerate(X))):
-            for j, value in enumerate(sample):
-                neuron = self.neurons[j]
-                M[i, j] = neuron(value)
+        pool = mp.Pool(processes=N_CPU)
+        M = pool.map(self._extract_features, X)
+        M = np.array(M)
         return M
 
     def fit(self, X, y):

@@ -19,7 +19,7 @@ for q in np.linspace(0.3, 0.9, 50):
         epsilone = 0.05
         layer = GLSLayer(Q, B, epsilone)
 
-        skf = StratifiedKFold(n_splits=10, random_state=620)
+        skf = StratifiedKFold(n_splits=10, random_state=6)
         skf.get_n_splits(X, y)
         F1 = []
         for train_index, test_index in skf.split(X, y):

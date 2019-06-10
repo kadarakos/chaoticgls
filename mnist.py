@@ -5,6 +5,7 @@ from neuron import GLSLayer
 from keras.datasets import mnist
 import gzip
 import _pickle as cPickle
+import tqdm
 
 with gzip.open('/roaming/u1257964/MNIST/mnist.pkl.gz') as f:
     mnist = cPickle.load(f, encoding='latin1') 
@@ -27,7 +28,7 @@ for q in np.linspace(0.3, 0.9, 50):
         skf = StratifiedKFold(n_splits=10, random_state=620)
         skf.get_n_splits(X, y)
         F1 = []
-        for train_index, test_index in skf.split(X, y):
+        for train_index, test_index in tqdm.tqdm(list(skf.split(X, y))):
             X_train, X_test = X[train_index], X[test_index]
             y_train, y_test = y[train_index], y[test_index]
             layer.fit(X_train, y_train)
