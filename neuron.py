@@ -5,6 +5,7 @@ by Harikrishnan N B and Nithin Nagaraj: https://arxiv.org/pdf/1905.12601.pdf
 from scipy.spatial.distance import cosine
 import numpy as np
 import tqdm
+import glsneuron
 
 class GLSNeuron(object):
     def __init__(self, q=0.5, b=0.55, epsilon=0.05):
@@ -17,28 +18,16 @@ class GLSNeuron(object):
         self.epsilon = epsilon
 
     def T_map(self, x):
-        """Compute  Generalized Luroth Series map function."""
-        if x >= 0 and x < self.b:
-            return x/self.b
-        elif self.b <= x and x < 1:
-            return (1 - x)/(1 - self.b)
-        else:
-            ValueError("invalid value encountered {}".format(x))
+        """
+        Compute  Generalized Luroth Series map function.        
+        """
+        return glsneuron.T_map(x, self.b)
 
     def __call__(self, x):
-        """Compute firing time."""
-        w = self.q
-        I_high, I_low = x + self.epsilon, x - self.epsilon 
-        N_it = 0
-        N_tol = 1000
-        while True:
-            w = self.T_map(w)
-            N_it += 1
-            if w <= I_high and w >= I_low:
-                return N_it
-            if N_it == N_tol:
-                raise ValueError("Neuron iterated {} times. \nValue: {}".format(N_it, w))
-                
+        """
+        Compute firing time.
+        """ 
+        return glsneuron.compute_gls(x, self.q, self.b, self.epsilon)
 
 
 class GLSLayer(object):
@@ -64,6 +53,7 @@ class GLSLayer(object):
         min_X = np.min(X)
         X_ = X - min_X
         return X_ / (np.max(X) - min_X)
+    
 
     def extract_features(self, X):
         """
@@ -72,7 +62,7 @@ class GLSLayer(object):
         """
         X = self.normalize(X)
         M = np.zeros(X.shape)
-        for i, sample in enumerate(X):
+        for i, sample in tqdm.tqdm(list(enumerate(X))):
             for j, value in enumerate(sample):
                 neuron = self.neurons[j]
                 M[i, j] = neuron(value)
@@ -115,8 +105,3 @@ class GLSLayer(object):
                     max_c = c
             y_hat[i] = self.classes[max_c]
         return y_hat
-
-
-
-
-        
