@@ -10,3 +10,7 @@ Below the plot shows the distribution of average F1-scores with 10-fold cross-va
 The mean performance is around 0.6 and getting the best 0.93 is very lucky.
 
 ![distplot](dist.png)
+
+
+This performance can be improved to 0.96 using 80-bit floating points and performance drops to 0.88 
+with 32-bit representaton.

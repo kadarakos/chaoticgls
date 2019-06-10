@@ -1,4 +1,4 @@
-cdef float T_map(float x, float b):
+cdef float T_map(long double x, long double b):
     """
     Compute  Generalized Luroth Series map function.
     """
@@ -9,15 +9,15 @@ cdef float T_map(float x, float b):
     else:
         ValueError("invalid value encountered {}".format(x))
 
-cpdef compute_gls(float x, float q, float b, float epsilon):
+cpdef compute_gls(long double x, long double q, long double b, long double epsilon):
     """
     Compute firing time.
     """
     cdef int N_it = 0
     cdef int N_tol = 10000
-    cdef float w = q
-    cdef float I_high = x + epsilon
-    cdef float I_low = x - epsilon 
+    cdef long double w = q
+    cdef long double I_high = x + epsilon
+    cdef long double I_low = x - epsilon 
     
     while True:
         w = T_map(w, b)
