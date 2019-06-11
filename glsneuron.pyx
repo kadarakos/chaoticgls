@@ -1,4 +1,4 @@
-cdef float T_map(long double x, long double b):
+cdef long double T_map(long double x, long double b):
     """
     Compute  Generalized Luroth Series map function.
     """

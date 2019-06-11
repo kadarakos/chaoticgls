@@ -17,7 +17,7 @@ for q in np.linspace(0.3, 0.9, 50):
         Q = np.ones(X.shape[1]) * q
         B = np.ones(X.shape[1]) * b
         epsilone = 0.05
-        layer = GLSLayer(Q, B, epsilone)
+        layer = GLSLayer(Q, B, epsilone, parallel=False)
 
         skf = StratifiedKFold(n_splits=10, random_state=6)
         skf.get_n_splits(X, y)

@@ -35,13 +35,15 @@ class GLSNeuron(object):
 
 
 class GLSLayer(object):
-    def __init__(self, q, b, epsilon):
+    def __init__(self, q, b, epsilon, parallel=False):
         """Both b and q are vectors for initial q and b values for all neurons, epsilon is a constant."""
         self.q = q
         self.b = b
         self.epsilon = epsilon
+        self.parallel = parallel
         self.neurons = []
         self.M = None
+
         self.populate_layer()
 
     def populate_layer(self):
@@ -70,10 +72,17 @@ class GLSLayer(object):
         Go through X and apply the layer to extract features. 
         (Algorithm 2. in the paper)
         """
-        X = self.normalize(X)
-        pool = mp.Pool(processes=N_CPU)
-        M = pool.map(self._extract_features, X)
-        M = np.array(M)
+        if self.parallel:
+            X = self.normalize(X)
+            pool = mp.Pool(processes=N_CPU)
+            M = pool.map(self._extract_features, X)
+            M = np.array(M)
+        else:
+            M = np.zeros(X.shape)
+            for i, sample in enumerate(X):
+                for j, value in enumerate(sample):
+                    neuron = self.neurons[j]
+                    M[i, j] = neuron(value)
         return M
 
     def fit(self, X, y):
