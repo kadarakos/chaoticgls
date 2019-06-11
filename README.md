@@ -1,7 +1,7 @@
-Reimplementation of [A Novel Chaos Theory Inspired Neuronal Architecture"](https://arxiv.org/pdf/1905.12601.pdf).     
+Reimplementation of ["A Novel Chaos Theory Inspired Neuronal Architecture"](https://arxiv.org/pdf/1905.12601.pdf).     
 
 I reimplemented the architecture presented in the paper, but rather than focusing on the small training set
-regime, I focused on standard 10-fold cross-validation. I feel like stopping here kind of for the moment, but
+regime, I focused on standard 10-fold cross-validation. I kind of feel like stopping here for the moment, but
 I'm happy to share the code for interested souls.
 
 # Setup
@@ -28,8 +28,10 @@ The mean performance is around 0.6 and getting the best 0.93 is very lucky.
 ![distplot](dist.png)
 
 
-This performance can be improved to 0.96 using 80-bit floating points and performance drops to 0.88 
-with 32-bit representaton. Pretty dark
+This performance can be improved to 0.96 using the right combination of 80-bit and 32-bit floating point 
+representations for the different variables and performance drops to 0.88 with 32-bit representaton for
+all variables. In the current implementation with 80-bit for all variables the best score is still .93
+with ```q = 0.89``` and ```b = 0.9```. Pretty dark.
 
 # MNIST
 
@@ -42,5 +44,5 @@ parallellism across samples, because its super slow otherwise (super slow this w
 
 The model is super sensitive to the values of ```q``` and ```b```, not to mention that even ```epsilon``` is a hyperparameter.
 I also couldn't find a way to implement it very fast: the iteration inside the neurons prevent me from thinking about a
-good vectorized implementation. When I come back to it my plan is to randomly initialize ```b``` and ```q```, different for
-each neuron and search for good values with  Evolution or Particle Swarm or something. Cheerio!
+good vectorized implementation. If I come back to it my plan is to randomly initialize ```b``` and ```q```, different for
+each neuron and search for good values with Evolution or Particle Swarm or something. Cheerio!
